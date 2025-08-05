@@ -1,0 +1,21 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Env / Poetry
+.venv/
+poetry.lock
+
+# OS
+.DS_Store
+
+# DB
+*.sqlite3
+
+# VSCode
+.vscode/
+
+# Byte-compiled
+*.log
