@@ -1,10 +1,10 @@
 from fastapi import APIRouter, HTTPException, status , Depends
 from jose import JWTError, jwt
-from fastapi.security import OAuth2PasswordBearer
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy.orm import Session
 from ..database import SessionLocal
-from ..models.user import User
-from ..schemas.user import UserRole
+from ..models.user import User, UserRole
+from ..schemas.user import UserRole as SchemaUserRole
 
 SECRET_KEY = 'SuperSecretKey'
 ALGORITHM = 'HS256'
@@ -16,9 +16,13 @@ def get_db():
     finally:
         db.close()
         
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
+bearer_scheme = HTTPBearer()
 
-def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
+def get_current_user(
+    credentials: HTTPAuthorizationCredentials = Depends(bearer_scheme),
+    db: Session = Depends(get_db)
+):
+    token = credentials.credentials
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials"
@@ -36,9 +40,19 @@ def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(
         raise credentials_exception
     return user
 
-def require_role(role: UserRole):
+def require_role(required_role: UserRole):
     def role_checker(current_user: User = Depends(get_current_user)):
-        if current_user.role != role and current_user.role != UserRole.admin:
-            raise HTTPException(status_code = 403, detail = 'Not enough permissions')
-        return current_user
+        if current_user.role == UserRole.admin:
+            return current_user
+        
+        if required_role == UserRole.writer and current_user.role == UserRole.writer:
+            return current_user
+            
+        if required_role == UserRole.reader:
+            return current_user
+            
+        raise HTTPException(
+            status_code=403, 
+            detail=f'Not enough permissions. Required: {required_role.value}, Current: {current_user.role.value}'
+        )
     return role_checker

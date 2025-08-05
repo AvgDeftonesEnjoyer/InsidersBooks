@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from ..schemas.user import UserCreate, UserRead
 from ..models.user import User, UserRole
 from ..database import SessionLocal
+from ..dependencies.auth import get_current_user
 from passlib.context import CryptContext
 from jose import jwt
 from datetime import datetime, timedelta
@@ -30,14 +31,14 @@ def create_access_token(data: dict):
 
 @router.post('/register', response_model = UserRead)
 def register(user_data: UserCreate, db: Session = Depends(get_db)):
-    user_exists = db.query(User).Filter(User.email == user_data.email).first()
+    user_exists = db.query(User).filter(User.email == user_data.email).first()
     if user_exists:
         raise HTTPException(status_code=400, detail ='Email already registered')
     
     hashed_password = pwd_context.hash(user_data.password)
     new_user = User(
         username = user_data.username,
-        email = user_data.email(),
+        email = user_data.email,
         hashed_password = hashed_password,
         role = UserRole.reader
     )
@@ -53,5 +54,14 @@ def login(user_data: UserCreate, db: Session = Depends(get_db)):
     if not user or not pwd_context.verify(user_data.password, user.hashed_password):
         raise HTTPException(status_code = 400, detail = 'Invalid credentials')
     
-    token = create_access_token(data={'sub':str(user.id), 'role': user.role})
+    token = create_access_token(data={"sub": str(user.id), "role": user.role.value})
     return {'access_token': token, 'token_type': 'bearer'}
+
+@router.get('/me')
+def get_current_user_info(current_user: User = Depends(get_current_user)):
+    return {
+        'id': current_user.id,
+        'username': current_user.username,
+        'email': current_user.email,
+        'role': current_user.role.value
+    }

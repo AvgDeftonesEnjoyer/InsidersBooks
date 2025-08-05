@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from .database import SessionLocal, Base, engine
 from .routes import auth, book
+from .models import User, Book
 
 Base.metadata.create_all(bind=engine)
 
