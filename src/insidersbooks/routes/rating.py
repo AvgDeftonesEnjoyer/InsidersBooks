@@ -14,8 +14,8 @@ def get_db():
         yield db
     finally:
         db.close()
-        
-@router.post('/book/{book_id}', resposnse_model = RatingRead)
+
+@router.post('/book/{book_id}', response_model = RatingRead)
 def rate_book(book_id : int, rating_data: RatingCreate, db: Session = Depends(get_db), user = Depends(get_current_user)):
     book = db.query(Book).filter(Book.id == book_id).first()
     if not book:

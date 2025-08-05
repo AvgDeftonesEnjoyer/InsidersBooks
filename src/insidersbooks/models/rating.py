@@ -9,7 +9,7 @@ class Rating(Base):
     id = Column(Integer, primary_key = True, index = True)
     value = Column(Integer, nullable = False)
     
-    user_id = Column(Integer, ForeignKey('user.id', on_delete='CASCADE'))
+    user_id = Column(Integer, ForeignKey('users.id', on_delete='CASCADE'))
     book_id = Column(Integer, ForeignKey('books.id', on_delete='CASCADE'))
     
     user = relationship('User', back_populates='ratings')

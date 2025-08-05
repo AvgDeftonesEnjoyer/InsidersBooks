@@ -3,7 +3,7 @@ from sqlalchemy.orm import relationship
 from ..database import Base
 
 class CommentReaction(Base):
-    __tablename__ = 'CommentReacitons'
+    __tablename__ = 'comment_reactions'
     __table_args__ = (UniqueConstraint('user_id', 'comment_id', name = 'unique_user_comment'), )
     
     id = Column(Integer, primary_key = True, index = True)

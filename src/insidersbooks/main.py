@@ -1,11 +1,14 @@
 from fastapi import FastAPI
 from .database import SessionLocal, Base, engine
+from .models.user import User, UserRole
+from .models.book import Book  
+from .models.comment import Comment
+from .models.comment_reaction import CommentReaction
+from .models.rating import Rating
 from .routes import auth, book, rating, comment, comment_rating
-from .models import User, Book, Comment, CommentReaction
-from .models import rating as rating_model
+
 
 Base.metadata.create_all(bind=engine)
-
 
 app = FastAPI()
 app.include_router(auth.router)
