@@ -1,0 +1,27 @@
+[project]
+name = "insidersbooks"
+version = "0.1.0"
+description = ""
+authors = [
+    {name = "Shapka Oleksii",email = "shapkaoleksiiu@gmail.com"}
+]
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi (>=0.116.1,<0.117.0)",
+    "uvicorn[standard] (>=0.35.0,<0.36.0)",
+    "sqlalchemy (>=2.0.42,<3.0.0)",
+    "psycopg2-binary (>=2.9.10,<3.0.0)",
+    "alembic (>=1.16.4,<2.0.0)",
+    "pydantic (>=2.11.7,<3.0.0)",
+    "python-jose[cryptography] (>=3.5.0,<4.0.0)",
+    "passlib[bcrypt] (>=1.7.4,<2.0.0)"
+]
+
+[tool.poetry]
+packages = [{include = "insidersbooks", from = "src"}]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
