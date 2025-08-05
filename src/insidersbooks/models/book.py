@@ -11,4 +11,7 @@ class Book(Base):
     author_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     
     author = relationship("User", back_populates="books")
+    ratings = relationship("Rating", back_populates="book", cascade="all, delete-orphan")
+    comments = relationship("Comment", back_populates="book", cascade="all, delete-orphan")
+
     

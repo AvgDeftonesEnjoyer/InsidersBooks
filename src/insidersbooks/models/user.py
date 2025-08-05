@@ -18,3 +18,6 @@ class User(Base):
     role = Column(Enum(UserRole), default=UserRole.reader, nullable=False)
     
     books = relationship("Book", back_populates="author")
+    ratings = relationship("Rating", back_populates="user", cascade="all, delete-orphan")
+    comments = relationship('Comment', back_populates='user', cascade='all, delete-orphan')
+    comment_reactions = relationship('CommentReaction', back_populates='user', cascade='all, delete-orphan')
